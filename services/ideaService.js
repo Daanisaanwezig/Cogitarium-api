@@ -1,4 +1,5 @@
 const db = require('../config/db')
+const llmService = require('./llmService')
 
 exports.fetchAll = () => {
     const sqlQuery = 'SELECT * FROM ideas'
@@ -12,16 +13,30 @@ exports.fetch = (id) => {
     return db.query(sqlQuery, params)
 }
 
-exports.create = (title, description) => {
-    const sqlQuery = 'INSERT INTO ideas (title, description) VALUES ($1, $2) RETURNING *'
-    const params = [title, description]
-    return db.query(sqlQuery, params)
+exports.create = async (title, description) => {
+    return new Promise((resolve, reject) => {
+        const sqlQuery = 'INSERT INTO ideas (title, description) VALUES ($1, $2) RETURNING *'
+        const params = [title, description]
+        db.query(sqlQuery, params).then(async idea => {
+            await llmService.createEmbeddings()
+            return resolve(idea)
+        }).catch((error) => {
+            return reject(error)
+        })
+    })
 }
 
 exports.update = (id, title, description) => {
-    const sqlQuery = 'UPDATE ideas SET title = $1, description = $2 WHERE id = $3 RETURNING *'
-    const params = [title, description, id]
-    return db.query(sqlQuery, params)
+    return new Promise((resolve, reject) => {
+        const sqlQuery = 'UPDATE ideas SET title = $1, description = $2, embedding = NULL, metadata = NULL WHERE id = $3 RETURNING *'
+        const params = [title, description, id]
+        db.query(sqlQuery, params).then(async idea => {
+            await llmService.createEmbeddings()
+            return resolve(idea)
+        }).catch((error) => {
+            return reject(error)
+        })
+    })
 }
 
 exports.delete = (id) => {
