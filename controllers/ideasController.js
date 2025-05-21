@@ -9,9 +9,9 @@ exports.getAllIdeas = async (req, res, next) => {
 }
 
 exports.getIdea = async(req, res, next) => {
-    const { id } = req.body
+    const { id } = req.params
     ideaService.fetch(id).then(ideas => {
-        res.json(ideas.rows)
+        res.json(ideas.rows[0])
     }).catch(error => {
         res.status(500).json(error)
     })
@@ -36,7 +36,7 @@ exports.updateIdea = async(req, res, next) => {
 }
 
 exports.deleteIdea = async(req, res, next) => {
-    const {id} = req.body
+    const {id} = req.params
     ideaService.delete(id).then(idea => {
         res.json(idea)
     }).catch(error => {
