@@ -6,5 +6,7 @@ const llmService = require('../services/llmService')
 router.post('/', generateController.generateIdeas)
 
 router.get('/generate', generateController.createEmbeddings)
+router.post('/search', generateController.vectorSearch)
+router.post('/advancedSearch', generateController.advancedSearch)
 
 module.exports = router
