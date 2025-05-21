@@ -18,3 +18,22 @@ exports.createEmbeddings = async (req, res, next) => {
         res.status(500).json(error)
     })
 }
+
+exports.vectorSearch = async (req, res, next) => {
+    const { query } = req.body
+    llmService.vectorSearch(query, 5).then(results => {
+        res.json(results.rows)
+    }).catch(error => {
+        res.status(500).json(error)
+    })
+}
+
+exports.advancedSearch = async (req, res, next) => {
+    const { query } = req.body
+    llmService.generateSimilarSearchQueries(query).then(async queries => {
+        const results = await llmService.querySimilarSearchQueries(queries)
+        res.json(results)
+    }).catch(error => {
+        res.status(500).json(error)
+    })
+}
