@@ -92,7 +92,7 @@ exports.querySimilarSearchQueries = async (searchQueries) => {
                 }
             }
         }
-        const sorted = items.sort((a, b) => parseFloat(b.similarity) - parseFloat(a.similarity));
+        const sorted = results.sort((a, b) => parseFloat(b.similarity) - parseFloat(a.similarity));
         return resolve(sorted)
     })
 }
