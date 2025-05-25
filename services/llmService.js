@@ -92,7 +92,7 @@ exports.querySimilarSearchQueries = async (searchQueries) => {
                 }
             }
         }
-        // TODO: Sort based on similarity score
+        const sorted = items.sort((a, b) => parseFloat(b.similarity) - parseFloat(a.similarity));
         return resolve(sorted)
     })
 }
