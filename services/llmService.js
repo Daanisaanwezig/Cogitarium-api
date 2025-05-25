@@ -40,7 +40,7 @@ exports.createEmbeddings = async () => {
     })
 }
 
-exports.vectorSearch = async (searchString, limit) => {
+exports.vectorSearch = async (searchString, limit = 10) => {
     return new Promise(async (resolve, reject) => {
         const embedding = await generateEmbeddings(searchString)
         
@@ -82,7 +82,7 @@ exports.querySimilarSearchQueries = async (searchQueries) => {
     return new Promise(async (resolve, reject) => {
         let results = []
         for (let query of searchQueries) {
-            const searchResults = await this.vectorSearch(query, 5)
+            const searchResults = await this.vectorSearch(query)
             for (let result of searchResults.rows) {
                 const existing = results.find(item => item.id == result.id)
                 if (! existing) {
@@ -93,7 +93,7 @@ exports.querySimilarSearchQueries = async (searchQueries) => {
             }
         }
         // TODO: Sort based on similarity score
-        return resolve(results)
+        return resolve(sorted)
     })
 }
 
@@ -135,3 +135,4 @@ function convertSimilarityToPercentage(similarity) {
     const similarityScore = 1 - similarity;
     return (similarityScore * 100).toFixed(2);
 }
+// https://chatgpt.com/c/682da8d8-9150-8001-90a1-83747d618d2f

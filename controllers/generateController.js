@@ -21,7 +21,7 @@ exports.createEmbeddings = async (req, res, next) => {
 
 exports.vectorSearch = async (req, res, next) => {
     const { query } = req.body
-    llmService.vectorSearch(query, 5).then(results => {
+    llmService.vectorSearch(query).then(results => {
         res.json(results.rows)
     }).catch(error => {
         res.status(500).json(error)
