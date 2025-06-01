@@ -4,7 +4,11 @@ exports.generateIdeas = async (req, res, next) => {
     try {
         const { prompt, existingIdeas } = req.body
         const generated = await llmService.generate({ prompt, existingIdeas })
-        res.json(generated)
+        const response = {
+            data: generated,
+            status: 200
+        }
+        res.json(response)
     } catch (err) {
         next(err)
     }
@@ -12,19 +16,26 @@ exports.generateIdeas = async (req, res, next) => {
 
 exports.createEmbeddings = async (req, res, next) => {
     llmService.createEmbeddings().then(() => {
-        res.sendStatus(200)
+        const response = {
+            data: null,
+            status: 200
+        }
+        res.json(response)
     }).catch(error => {
-        // TODO: Add handling with reason
-        res.status(500).json(error)
+        next(error)
     })
 }
 
 exports.vectorSearch = async (req, res, next) => {
     const { query } = req.body
     llmService.vectorSearch(query).then(results => {
-        res.json(results.rows)
+        const response = {
+            data: results.rows,
+            status: 200
+        }
+        res.json(response)
     }).catch(error => {
-        res.status(500).json(error)
+        next(error)
     })
 }
 
@@ -32,8 +43,12 @@ exports.advancedSearch = async (req, res, next) => {
     const { query } = req.body
     llmService.generateSimilarSearchQueries(query).then(async queries => {
         const results = await llmService.querySimilarSearchQueries(queries)
-        res.json(results)
+        const response = {
+            data: results,
+            status: 200
+        }
+        res.json(response)
     }).catch(error => {
-        res.status(500).json(error)
+        next(error)
     })
 }

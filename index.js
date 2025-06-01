@@ -23,9 +23,14 @@ app.use('/api/ideas', ideasRouter)
 app.use('/api/generate', generateRouter)
 
 // Global error handler
-app.use((err, req, res, next) => {
-    console.error(err.stack)
-    res.status(500).json({ error: 'Internal Server Error' })
+app.use((error, req, res, next) => {
+    console.error(error.stack)
+    const response = {
+        data: null,
+        error: error.stack,
+        status: 500
+    }
+    res.status(500).json(response)
 })
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`))
