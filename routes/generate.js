@@ -9,5 +9,6 @@ router.get('/generate', generateController.createEmbeddings)
 router.post('/search', generateController.vectorSearch)
 router.post('/advancedSearch', generateController.advancedSearch)
 router.post('/summary', generateController.summary)
+router.post('/chat', generateController.chat)
 
 module.exports = router

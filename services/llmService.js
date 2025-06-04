@@ -3,6 +3,7 @@ const db = require('../config/db')
 
 const SEARCH_QUERY_URL = process.env.SEARCH_QUERY_URL
 const SUMMARY_URL= process.env.SUMMARY_URL
+const CHAT_URL = process.env.CHAT_URL
 
 exports.generate = async () => {
     // TODO: Add generate call
@@ -101,11 +102,21 @@ exports.querySimilarSearchQueries = async (searchQueries) => {
 exports.generateSummary = async (queryString) => {
     return new Promise(async (resolve, reject) => {
         query(SUMMARY_URL, { "question": queryString }).then((results) => {
-            console.log(results);
             return resolve(results)
         }).catch(error => {
             console.error('Failed to generate search queries...', error);
             return reject('Failed to generate search queries...')
+        })
+    })
+}
+
+exports.chat = async (message) => {
+    return new Promise(async (resolve, reject) => {
+        query(CHAT_URL, { "question": message }).then((result) => {
+            return resolve(result)
+        }).catch(error => {
+            console.error('Failed to generate response...', error);
+            return reject('Failed to generate response...')
         })
     })
 }
@@ -148,4 +159,3 @@ function convertSimilarityToPercentage(similarity) {
     const similarityScore = 1 - similarity;
     return (similarityScore * 100).toFixed(2);
 }
-// https://chatgpt.com/c/682da8d8-9150-8001-90a1-83747d618d2f
