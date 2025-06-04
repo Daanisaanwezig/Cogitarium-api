@@ -52,3 +52,17 @@ exports.advancedSearch = async (req, res, next) => {
         next(error)
     })
 }
+
+exports.summary = async (req, res, next) => {
+    const { query } = req.body
+    llmService.generateSummary(query).then(result => {
+        console.log(result);
+        const response = {
+            data: result,
+            status: 200
+        }
+        res.json(response)
+    }).catch(error => {
+        next(error)
+    })
+}

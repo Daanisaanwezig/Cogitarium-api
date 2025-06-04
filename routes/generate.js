@@ -8,5 +8,6 @@ router.post('/', generateController.generateIdeas)
 router.get('/generate', generateController.createEmbeddings)
 router.post('/search', generateController.vectorSearch)
 router.post('/advancedSearch', generateController.advancedSearch)
+router.post('/summary', generateController.summary)
 
 module.exports = router
