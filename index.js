@@ -2,10 +2,13 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const db = require('./config/db')
+const db = require('./utils/db')
 
 const ideasRouter = require('./routes/ideas')
-const generateRouter = require('./routes/generate')
+const chatRouter = require('./routes/chat')
+const embeddingRouter = require('./routes/embeddings')
+const vectorRouter = require('./routes/vector')
+const summaryRouter = require('./routes/summarize')
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -20,7 +23,10 @@ db.connect()
 
 // Mount routers
 app.use('/api/ideas', ideasRouter)
-app.use('/api/generate', generateRouter)
+app.use('/api/chat', chatRouter)
+app.use('/api/embedding', embeddingRouter)
+app.use('/api/summarize', summaryRouter)
+app.use('/api/search', vectorRouter)
 
 // Global error handler
 app.use((error, req, res, next) => {
