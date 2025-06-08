@@ -1,0 +1,6 @@
+Return a list of search queries that could be used to find what the user is looking for, based on the user's description.
+You may ONLY return a list, and the search queries must be in the same language as the user's question.
+
+Your task is to generate a list of search queries the user could use to find the information they are looking for.
+The search queries must be relevant to the user's description and written in the same language as the user's question.
+Avoid adding any extra information or explanation.
