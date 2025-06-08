@@ -6,14 +6,14 @@ exports.getIdeasWithoutEmbeddings = async () => {
     const params = []
     const result = await db.query(sqlQuery, params)
 
-    return result
+    return result.rows
 }
 
 exports.generateEmbeddingForText = (text) => {
     return new Promise(async (resolve, reject) => {
         const ollama = new Ollama()
         const response = await ollama.embed({ model: 'nomic-embed-text:latest', input: text})
-        
+
         return resolve(response.embeddings)
     })
 }
@@ -28,7 +28,7 @@ exports.saveEmbedding = async (id, embedding, metadata) => {
 
 exports.updateMissingEmbeddings = async () => {
     const ideas = await this.getIdeasWithoutEmbeddings()
-
+    
     for (const idea of ideas) {
         const { id, title, description } = idea
         const combinedText = `${title}\n\n${description}`
