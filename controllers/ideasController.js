@@ -1,4 +1,7 @@
 const ideaService = require('../services/ideaService')
+const embeddingService = require('../services/llm/embedding')
+const vectorService = require('../services/llm/vector')
+const searchQueryService = require('../services/llm/searchQuery')
 
 exports.getAllIdeas = async (req, res, next) => {
     ideaService.fetchAll().then(ideas => {
@@ -12,7 +15,7 @@ exports.getAllIdeas = async (req, res, next) => {
     })
 }
 
-exports.getIdea = async(req, res, next) => {
+exports.getIdea = async (req, res, next) => {
     const { id } = req.params
     ideaService.fetch(id).then(ideas => {
         const response = {
@@ -25,7 +28,7 @@ exports.getIdea = async(req, res, next) => {
     })
 }
 
-exports.createIdea = async(req, res, next) => {
+exports.createIdea = async (req, res, next) => {
     const { title, description } = req.body
     ideaService.create(title, description).then(idea => {
         const response = {
@@ -38,8 +41,8 @@ exports.createIdea = async(req, res, next) => {
     })
 }
 
-exports.updateIdea = async(req, res, next) => {
-    const {id, title, description} = req.body
+exports.updateIdea = async (req, res, next) => {
+    const { id, title, description } = req.body
     ideaService.update(id, title, description).then(idea => {
         const response = {
             data: idea,
@@ -51,8 +54,8 @@ exports.updateIdea = async(req, res, next) => {
     })
 }
 
-exports.deleteIdea = async(req, res, next) => {
-    const {id} = req.params
+exports.deleteIdea = async (req, res, next) => {
+    const { id } = req.params
     ideaService.delete(id).then(idea => {
         const response = {
             data: idea,
@@ -62,4 +65,46 @@ exports.deleteIdea = async(req, res, next) => {
     }).catch(error => {
         next(error)
     })
+}
+
+exports.search = async (req, res, next) => {
+    const { query } = req.body
+    const embedding = await embeddingService.generateEmbeddingForText(query)
+    const results = await vectorService.vectorSearch(embedding)
+
+    const response = {
+        data: results,
+        status: 200
+    }
+    res.json(response)
+}
+
+exports.advancedSearch = async (req, res, next) => {
+    const { query } = req.body
+    const similarSearchQueries = await searchQueryService.generateSearhQueries(query)
+
+    let results = []
+    for (const query of similarSearchQueries) {
+        const embedding = await embeddingService.generateEmbeddingForText(query)
+        if (embedding.length == 0) {
+
+        } else {
+            const result = await vectorService.vectorSearch(embedding)
+
+            const existing = results.find(item => item.id == result.id)
+
+            if (!existing) {
+                results.push(result)
+            } else if (existing.similarity < result.similarity) {
+                existing.similarity = result.similarity
+            }
+        }
+    }
+    const sorted = results.sort((a, b) => parseFloat(b.similarity) - parseFloat(a.similarity))[0]
+
+    const response = {
+        data: sorted,
+        status: 200
+    }
+    res.json(response)
 }
