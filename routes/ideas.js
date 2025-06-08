@@ -7,5 +7,8 @@ router.get('/:id', ideasController.getIdea)
 router.post('/', ideasController.createIdea)
 router.put('/:id', ideasController.updateIdea)
 router.delete('/:id', ideasController.deleteIdea)
+router.post('/search', ideasController.search)
+router.post('/advanced-search', ideasController.advancedSearch)
+
 
 module.exports = router
