@@ -1,5 +1,5 @@
-const db = require('../config/db')
-const llmService = require('./llmService')
+const db = require('../utils/db')
+const embeddingService = require('./llm/embedding')
 
 exports.fetchAll = () => {
     const sqlQuery = 'SELECT * FROM ideas'
@@ -18,7 +18,7 @@ exports.create = async (title, description) => {
         const sqlQuery = 'INSERT INTO ideas (title, description) VALUES ($1, $2) RETURNING *'
         const params = [title, description]
         db.query(sqlQuery, params).then(async idea => {
-            await llmService.createEmbeddings()
+            await embeddingService.updateMissingEmbeddings()
             return resolve(idea)
         }).catch((error) => {
             return reject(error)
@@ -31,7 +31,7 @@ exports.update = (id, title, description) => {
         const sqlQuery = 'UPDATE ideas SET title = $1, description = $2, embedding = NULL, metadata = NULL WHERE id = $3 RETURNING *'
         const params = [title, description, id]
         db.query(sqlQuery, params).then(async idea => {
-            await llmService.createEmbeddings()
+            await embeddingService.updateMissingEmbeddings()
             return resolve(idea)
         }).catch((error) => {
             return reject(error)
